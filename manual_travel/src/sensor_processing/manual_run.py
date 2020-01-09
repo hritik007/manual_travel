@@ -2,7 +2,7 @@
 #importing required libraries
 import rospy
 import tf
-
+import time
 #importing assistant files(larger the number , more the priority)
 import gps_and_yaw_processing_0
 
@@ -29,14 +29,16 @@ Bearing=0.0
 goal_marker_distance=0.0
 rover_rotating_angle=0.0
 
+initial_time=0.0
+
 
 def calculation_and_display_function():
     #globalizing every value found
-    global goal_marker_distance , rover_rotating_angle , rover_lat,rover_lon,goal_lat,goal_lon, Bearing
+    global goal_marker_distance , rover_rotating_angle , rover_lat,rover_lon,goal_lat,goal_lon, Bearing, initial_time
    
     goal_marker_distance=gps_and_yaw_processing_0.calc_min_distance(rover_lat, rover_lon, goal_lat, goal_lon)
     rover_rotating_angle, Bearing =gps_and_yaw_processing_0.calc_rover_rotating_angle(rover_lat, rover_lon, goal_lat, goal_lon,yaw)
-
+    print("elapsed time              : "+str(format(((time.time()-initial_time)/60),'.2f'))+" minutes")
     print("gps bearing               : "+str(Bearing))
     print("yaw (-180 to +180) format : "+str(yaw)+" degrees")
     print("goal  (lat , lon)         : ( "+str(goal_lat)+" , "+str(goal_lon)+" )")
@@ -73,4 +75,6 @@ def listener():
     rospy.spin()
 
 if __name__ == '__main__':
+    global initial_time
+    initial_time=time.time()
     listener()
